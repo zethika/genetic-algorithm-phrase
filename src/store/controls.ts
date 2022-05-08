@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 
-const useStore = defineStore('controls', {
+export const useControlsStore = defineStore('controls', {
     state: () => {
         return {
             running: false,
