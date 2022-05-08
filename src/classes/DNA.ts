@@ -24,6 +24,13 @@ export default class DNA{
     }
 
     /**
+     * Returns the genes as a single string
+     */
+    phrase(){
+        return this.genes.join('');
+    }
+
+    /**
      * Determines how many characters match between the DNA genes and a match
      * @param match
      */
