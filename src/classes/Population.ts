@@ -6,13 +6,13 @@ export default class{
     private readonly mutationRate: number;
     private readonly target: string;
     private _highestFitness: { number: number, dna: DNA|null };
-    private population: DNA[];
+    private _population: DNA[];
     private _generation: number;
 
     private pool: Array<number>
 
     private _hasTarget: boolean;
-    private averageFitness: number;
+    private _averageFitness: number;
 
     constructor(populationSize: number, mutationRate: number, target: string) {
         this.populationSize = populationSize;
@@ -21,18 +21,26 @@ export default class{
         this._highestFitness = {number: 0, dna: null};
         this.pool = []
         this._hasTarget = false;
-        this.averageFitness = 0;
+        this._averageFitness = 0;
         this._generation = 0;
 
         const dnaSize = target.length;
-        this.population = []
+        this._population = []
         for(let i = 0; i < populationSize; i++){
-            this.population.push(new DNA(dnaSize))
+            this._population.push(new DNA(dnaSize))
         }
     }
 
     get generation(): number {
         return this._generation;
+    }
+
+    get averageFitness(): number {
+        return this._averageFitness;
+    }
+
+    get population(): DNA[] {
+        return this._population;
     }
 
     get highestFitness(): { number: number; dna: DNA | null } {
@@ -47,7 +55,7 @@ export default class{
      * Calculates the fitness for each element of the population and determines the highest fitness in the population
      */
     calculatePopulationFitness(){
-        this.population.forEach(dna => {
+        this._population.forEach(dna => {
             dna.determineFitness(this.target)
             if(dna.fitness > this._highestFitness.number)
                 this._highestFitness = {number: dna.fitness, dna: dna}
@@ -60,7 +68,7 @@ export default class{
      * The fitness is mapped between 0 and 100 to limit the array size.
      */
     generateMatingPool(){
-        this.population.forEach((dna,index) => {
+        this._population.forEach((dna, index) => {
             const percentage = Math.floor(mapValueToRange(dna.fitness,0,this._highestFitness.number,0,100))
             this.pool = this.pool.concat(new Array(percentage).fill(index))
         })
@@ -72,11 +80,11 @@ export default class{
     generateNextGeneration(){
         const matingPoolSize = this.pool.length
         for(let i = 0; i < this.populationSize; i++){
-            const partnerA = this.population[Math.floor(Math.random()*matingPoolSize)];
-            const partnerB = this.population[Math.floor(Math.random()*matingPoolSize)];
+            const partnerA = this._population[this.pool[Math.floor(Math.random()*matingPoolSize)]];
+            const partnerB = this._population[this.pool[Math.floor(Math.random()*matingPoolSize)]];
             let child = partnerA.crossOver(partnerB);
             child.mutate(this.mutationRate);
-            this.population[i] = child;
+            this._population[i] = child;
         }
         this._generation++;
     }
@@ -86,8 +94,8 @@ export default class{
      */
     evaluate(){
         let total = 0;
-        this.population.forEach(dna => total += dna.fitness)
-        this.averageFitness = mapValueToRange(total,0,this.target.length*this.populationSize, 0,100*this.populationSize)/this.populationSize;
+        this._population.forEach(dna => total += dna.fitness)
+        this._averageFitness = mapValueToRange(total,0,this.target.length*this.populationSize, 0,100*this.populationSize)/this.populationSize;
         this._hasTarget = this._highestFitness.dna?.phrase() === this.target
     }
 }
