@@ -61,7 +61,7 @@ function updateValue(e: InputEvent)
     <div :class="{'pointer-events-none opacity-70': props.disabled === true,'text-red': hasError}">
         <div class="relative">
             <label v-if="typeof props.label !== 'undefined'" :for="id" :class="[{'text-red': hasError},focus || hasValue ? 'top-0 left-0 text-xs' : 'top-4 left-0', focus ? 'text-blue' : 'text-grey-lighter']" class="absolute transition-all">{{props.label}}</label>
-            <input :class="inputClasses" class="h-10 border-b pt-7 pb-4 focus:outline-none transition-colors" :id="id" :type="typeComp" ref="inputRef" :value="props.modelValue" :disabled="props.disabled" @input="updateValue" @focusin="focus = true" @focusout="focus = false" />
+            <input :class="inputClasses" class="h-10 border-b pt-7 pb-4 focus:outline-none transition-colors bg-transparent" :id="id" :type="typeComp" ref="inputRef" :value="props.modelValue" :disabled="props.disabled" @input="updateValue" @focusin="focus = true" @focusout="focus = false" />
             <div v-if="hasRightContent" class="absolute top-0 right-0 w-[30px] h-[40px]">
                 <slot name="input_right"/>
             </div>

@@ -68,10 +68,10 @@ watch(() => props.modelValue, () => recalc())
 <template>
     <label :for="id" class="toggle-input cursor-pointer select-none" >
         <span class="text-grey-lightest block">{{label}}</span>
-        <span class="bg-grey-lighterest relative overflow-hidden h-8 rounded-2xl inline-flex leading-8">
+        <span class="bg-grey-lighterest relative overflow-hidden h-8 rounded-2xl inline-flex leading-8 bg-blue-800">
             <span class="px-4 transition-all" :class="[leftActive === false ? 'opacity-1' : 'opacity-0']" ref="leftTextRef">{{leftText}}</span>
             <span class="px-4 transition-all" :class="[leftActive ? 'opacity-1' : 'opacity-0']" ref="rightTextRef">{{rightText}}</span>
-            <span class="absolute top-0 h-8 px-4 rounded-2xl overflow-hidden whitespace-nowrap text-white transition-all" :class="[activeNegative ? 'bg-red' : 'bg-blue']" :style="activeStyle">{{activeText}}</span>
+            <span class="absolute top-0 h-8 px-4 rounded-2xl overflow-hidden whitespace-nowrap text-white transition-all" :class="[activeNegative ? 'bg-red-500' : 'bg-blue-400']" :style="activeStyle">{{activeText}}</span>
         </span>
         <input :id="id" class="hidden" type="checkbox" :checked="leftActive === false" @change="emit('update:modelValue',leftActive ? rightValue : leftValue)">
     </label>
