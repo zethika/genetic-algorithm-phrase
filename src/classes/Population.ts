@@ -5,17 +5,24 @@ export default class{
     private readonly populationSize: number;
     private readonly mutationRate: number;
     private readonly target: string;
-    private highestFitness: number;
+    private _highestFitness: { number: number, dna: DNA|null };
     private population: DNA[];
+    private _generation: number;
 
     private pool: Array<number>
+
+    private _hasTarget: boolean;
+    private averageFitness: number;
 
     constructor(populationSize: number, mutationRate: number, target: string) {
         this.populationSize = populationSize;
         this.mutationRate = mutationRate;
         this.target = target;
-        this.highestFitness = 0;
+        this._highestFitness = {number: 0, dna: null};
         this.pool = []
+        this._hasTarget = false;
+        this.averageFitness = 0;
+        this._generation = 0;
 
         const dnaSize = target.length;
         this.population = []
@@ -24,14 +31,26 @@ export default class{
         }
     }
 
+    get generation(): number {
+        return this._generation;
+    }
+
+    get highestFitness(): { number: number; dna: DNA | null } {
+        return this._highestFitness;
+    }
+
+    get hasTarget(): boolean {
+        return this._hasTarget;
+    }
+
     /**
      * Calculates the fitness for each element of the population and determines the highest fitness in the population
      */
     calculatePopulationFitness(){
         this.population.forEach(dna => {
             dna.determineFitness(this.target)
-            if(dna.fitness > this.highestFitness)
-                this.highestFitness = dna.fitness
+            if(dna.fitness > this._highestFitness.number)
+                this._highestFitness = {number: dna.fitness, dna: dna}
         })
     }
 
@@ -42,7 +61,7 @@ export default class{
      */
     generateMatingPool(){
         this.population.forEach((dna,index) => {
-            const percentage = Math.floor(mapValueToRange(dna.fitness,0,this.highestFitness,0,100))
+            const percentage = Math.floor(mapValueToRange(dna.fitness,0,this._highestFitness.number,0,100))
             this.pool = this.pool.concat(new Array(percentage).fill(index))
         })
     }
@@ -59,5 +78,16 @@ export default class{
             child.mutate(this.mutationRate);
             this.population[i] = child;
         }
+        this._generation++;
+    }
+
+    /**
+     * Evaluates the current generation of the population
+     */
+    evaluate(){
+        let total = 0;
+        this.population.forEach(dna => total += dna.fitness)
+        this.averageFitness = mapValueToRange(total,0,this.target.length*this.populationSize, 0,100*this.populationSize)/this.populationSize;
+        this._hasTarget = this._highestFitness.dna?.phrase() === this.target
     }
 }
