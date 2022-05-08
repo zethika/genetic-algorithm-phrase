@@ -8,11 +8,9 @@ const store = useControlsStore()
 </script>
 
 <template>
-    <div class="p-4 bg-blue-500 text-white">
-        <h2 class="mb-4 text-2xl">Controls</h2>
-        <RegularInput v-model="store.phrase" label="Phrase" class="mb-4" />
-        <RegularInput v-model="store.population" label="Population" class="mb-4" type="number" />
-        <RegularInput v-model="store.mutationRate" label="Mutation rate (%)" class="mb-4" type="number" />
-        <ToggleInput v-model="store.running" :left-option="{text: 'Running'}" :right-option="{text: 'Stopped'}" />
-    </div>
+    <h2 class="mb-4 text-2xl">Controls</h2>
+    <RegularInput v-model="store.phrase" label="Phrase" class="mb-4" />
+    <RegularInput v-model="store.population" label="Population" class="mb-4" type="number" />
+    <RegularInput v-model="store.mutationRate" label="Mutation rate (%)" class="mb-4" type="number" />
+    <ToggleInput v-model="store.running" :left-option="{text: 'Running'}" :right-option="{text: 'Stopped'}" />
 </template>
