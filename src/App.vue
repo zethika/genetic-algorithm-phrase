@@ -53,6 +53,10 @@ watch(() => store.running, () => {
 })
 
 watch([() => store.population, () => store.phrase, () => store.mutationRate], () => {
+    reset();
+})
+
+function reset(){
     store.running = false;
     state.bestPhrase = ''
     state.phrases = [] as Array<string>
@@ -65,7 +69,7 @@ watch([() => store.population, () => store.phrase, () => store.mutationRate], ()
         store.mutationRate,
         store.phrase
     );
-})
+}
 
 </script>
 
