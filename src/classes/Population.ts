@@ -82,13 +82,15 @@ export default class{
      */
     generateNextGeneration(){
         const matingPoolSize = this.pool.length-1
+        let newPopulation = [];
         for(let i = 0; i < this._population.length; i++){
             const partnerA = this._population[this.pool[getRandomInteger(0,matingPoolSize)]];
             const partnerB = this._population[this.pool[getRandomInteger(0,matingPoolSize)]];
             let child = partnerA.crossOver(partnerB);
             child.mutate(this.mutationRate);
-            this._population[i] = child;
+            newPopulation[i] = child;
         }
+        this._population = newPopulation;
         this._generation++;
     }
 
