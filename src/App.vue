@@ -3,12 +3,11 @@ import Controls from "@/components/Controls.vue";
 import {useControlsStore} from "@/store/controls";
 import {onMounted, reactive, watch} from "vue";
 import Population from "@/classes/Population";
-import mapValueToRange from "@/helpers/mapValueToRange";
 const store = useControlsStore();
 const allowedSpeed = 1000/30;
 const population = new Population(
     store.population,
-    mapValueToRange(store.mutationRate,0,100,0,1),
+    store.mutationRate,
     store.phrase
 );
 
@@ -16,7 +15,8 @@ const state = reactive({
     bestPhrase: '',
     phrases: [] as Array<string>,
     generations: 0,
-    averageFitness: 0
+    averageFitness: 0,
+    bestFitness: 0
 })
 
 onMounted(() => {
@@ -29,6 +29,7 @@ function runIteration(){
 
     population.calculatePopulationFitness()
     population.generateMatingPool()
+    population.calculateAverage();
     population.generateNextGeneration()
 
     population.evaluate();
@@ -39,8 +40,8 @@ function runIteration(){
     state.averageFitness = population.averageFitness;
     state.phrases = population.population.map(dna => dna.phrase());
     state.bestPhrase = population.highestFitness.dna === null ? '' : population.highestFitness.dna?.phrase()
+    state.bestFitness = population.highestFitness.number
     state.generations = population.generation;
-
     if(store.running)
     {
         const diff = new Date().getTime() - iterationStart
@@ -63,7 +64,8 @@ watch(() => store.running, () => {
             <h1 class="text-2xl mb-4">Population</h1>
             <p class="text-xl">Best fit: {{state.bestPhrase}}</p>
             <p>Generation: {{state.generations}}</p>
-            <p>Average fitness: {{state.averageFitness}}</p>
+            <p>Average fitness: {{state.averageFitness.toFixed(2)}}%</p>
+            <p>Best fitness: {{state.bestFitness}}</p>
             <p class="mt-4">Phrases:</p>
             <p v-for="phrase in state.phrases">{{phrase}}</p>
         </div>

@@ -1,4 +1,6 @@
 import getRandomCharacter from "@/helpers/getRandomCharacter";
+import getRandomInteger from "@/helpers/getRandomInteger";
+import getRandomNumber from "@/helpers/getRandomNumber";
 
 export default class DNA{
     private _genes: Array<string>;
@@ -49,7 +51,7 @@ export default class DNA{
      */
     crossOver(partner: DNA){
         let child = new DNA(this._genes.length);
-        const midpoint = Math.floor(Math.random()*this._genes.length);
+        const midpoint = getRandomInteger(0,this._genes.length);
         for(let i = 0; i < this._genes.length; i++){
             if(i > midpoint){
                 child.genes[i] = this.genes[i]
@@ -65,9 +67,9 @@ export default class DNA{
      * @param mutationRate
      */
     mutate(mutationRate: number){
-        for(let i = 0; i < this.genes.length; i++){
-            if(Math.random() < mutationRate)
-                this.genes[i] = getRandomCharacter()
+        for(let i = 0; i < this._genes.length; i++){
+            if(getRandomNumber(0,100) < mutationRate)
+                this._genes[i] = getRandomCharacter()
         }
     }
 }

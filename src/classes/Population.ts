@@ -1,5 +1,6 @@
 import DNA from "@/classes/DNA";
 import mapValueToRange from "@/helpers/mapValueToRange";
+import getRandomInteger from "@/helpers/getRandomInteger";
 
 export default class{
     private readonly populationSize: number;
@@ -55,6 +56,7 @@ export default class{
      * Calculates the fitness for each element of the population and determines the highest fitness in the population
      */
     calculatePopulationFitness(){
+        this._highestFitness = {number: 0, dna: null};
         this._population.forEach(dna => {
             dna.determineFitness(this.target)
             if(dna.fitness > this._highestFitness.number)
@@ -68,8 +70,9 @@ export default class{
      * The fitness is mapped between 0 and 100 to limit the array size.
      */
     generateMatingPool(){
+        this.pool = [];
         this._population.forEach((dna, index) => {
-            const percentage = Math.floor(mapValueToRange(dna.fitness,0,this._highestFitness.number,0,100))
+            const percentage = Math.floor(mapValueToRange(dna.fitness,0,this.highestFitness.number,0,100))
             this.pool = this.pool.concat(new Array(percentage).fill(index))
         })
     }
@@ -78,10 +81,10 @@ export default class{
      *
      */
     generateNextGeneration(){
-        const matingPoolSize = this.pool.length
-        for(let i = 0; i < this.populationSize; i++){
-            const partnerA = this._population[this.pool[Math.floor(Math.random()*matingPoolSize)]];
-            const partnerB = this._population[this.pool[Math.floor(Math.random()*matingPoolSize)]];
+        const matingPoolSize = this.pool.length-1
+        for(let i = 0; i < this._population.length; i++){
+            const partnerA = this._population[this.pool[getRandomInteger(0,matingPoolSize)]];
+            const partnerB = this._population[this.pool[getRandomInteger(0,matingPoolSize)]];
             let child = partnerA.crossOver(partnerB);
             child.mutate(this.mutationRate);
             this._population[i] = child;
@@ -89,13 +92,18 @@ export default class{
         this._generation++;
     }
 
+    calculateAverage(){
+        let total = 0;
+        this._population.forEach(dna => {
+            total += dna.fitness
+        })
+        this._averageFitness = mapValueToRange(total,0,this.target.length*this.populationSize, 0,100*this.populationSize)/this.populationSize;
+    }
+
     /**
      * Evaluates the current generation of the population
      */
     evaluate(){
-        let total = 0;
-        this._population.forEach(dna => total += dna.fitness)
-        this._averageFitness = mapValueToRange(total,0,this.target.length*this.populationSize, 0,100*this.populationSize)/this.populationSize;
         this._hasTarget = this._highestFitness.dna?.phrase() === this.target
     }
 }

@@ -6,7 +6,7 @@ export const useControlsStore = defineStore('controls', {
             running: false,
             phrase: 'To be or not to be.',
             population: 200,
-            mutationRate: 10
+            mutationRate: 1
         }
     },
 })
